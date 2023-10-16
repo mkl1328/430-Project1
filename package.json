@@ -1,0 +1,27 @@
+{
+  "name": "430-project1",
+  "version": "1.0.0",
+  "description": "Say the Same thing - API project",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./src/server.js",
+    "pretest": "eslint ./src --fix",
+    "test": "echo \"Tests complete\"",
+    "nodemon": "nodemon -e js,html,css --watch ./src --watch ./hosted ./src/server.js",
+    "buildBundle": "webpack",
+    "watchBundle": "webpack watch",
+    "heroku-postbuild": "webpack --mode production"
+  },
+  "dependencies": {
+    "weback": "^0.0.1-security",
+    "webpack-cli": "^5.1.4"
+  },
+  "author": "Max Lama",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "eslint": "^8.51.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-import": "^2.28.1",
+    "nodemon": "^3.0.1"
+  }
+}
