@@ -6,6 +6,8 @@ const jsonHandler = require('./jsonResponses.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
+const Games = {}
+//Might be able to use an array for home screen, and object with  
 const currentPlayers = {} // For all of the responses for long polling.
 
 const urlStruct = {
@@ -13,7 +15,8 @@ const urlStruct = {
   '/style.css': htmlHandler.getCSS,
   '/bundle.js': htmlHandler.getBundle,
   notFound: jsonHandler.notFound,
-  //newgame
+  // '/newGame'
+  // '/lookForGames'
   //joingame
   //submitmessage
   //itwasthesame
