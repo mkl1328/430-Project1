@@ -2,9 +2,10 @@ let localData = {}
 
 const resetLocalData = () => {
   localData = {
-    name: 'guest',
-    face: 1,
-    inGame : false,
+    name: localStorage.getItem('STST_name') || 'guest',
+    face: localStorage.getItem('STST_face') || 1,
+    //Stats
+    state : 'home',
     player : null,
     words : {},
     gameCode : null,
@@ -23,11 +24,15 @@ const handleResponse = async (response) => {
 
 //Updates game list on homepage with data from lookForGames()
 const updateGameList = async (response) => {
+  const gameList = document.querySelector("#game-list"); 
+
   let obj = await response.json();
   if(JSON.stringify(obj) === '{}') return;
   console.log(obj);
   // obj.activeCodes
   //TODO make these into list (scrollable.)
+  //Maybe use an html template? 
+  // after template is built, add event listener to button.
 }
 
 //Long polling on home page
@@ -39,12 +44,13 @@ const lookForGames = async () => {
     },
   });
   
-  if (localData.inGame) return
+  if (localData.inGame !== 'home') return
 
   if (response.status = 502) {
     await lookForGames();
   } else if (response.status != 200) {
     console.log(response.statusText)
+    console.log("searching again")
     // IDK if this is needed??? (below)
     // used on the website I learned about long polling from
     // await new Promise(resolve => setTimeout(resolve, 1000))
@@ -55,9 +61,10 @@ const lookForGames = async () => {
   }
 }
 
+
+
 const init = async () => {
   resetLocalData();
-  //TODO load in face and name from local storage (or set to default - 1 & guest)
 
   //Populate current open games
   const response = await fetch('/getGameList')
@@ -65,19 +72,18 @@ const init = async () => {
 
   // Set all buttons to send fetch requests
   const newGameButton = document.querySelector("#make-new-game");
-
   // Functionality
 
   const createNewGame = async () => {
     newGameButton.disabled = true;
-    const response = await fetch('/newGame', {
+    const response = await fetch(`/newGame?name=${localData.name}&face=${localData.face}`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
       },
     });
     if (response.status === 201) {
-      localData.inGame = true;
+      localData.inGame = 'waiting';
       localData.player = 'p1';
       document.querySelector('#home-page').classList.remove('active');
       document.querySelector('#game-page').classList.add('active');
@@ -98,5 +104,10 @@ const init = async () => {
   newGameButton.addEventListener("click", createNewGame);
   lookForGames();
 }
+
+window.addEventListener("beforeunload", () => {
+  // quit game (if in one) -- differentiate here or on server for waiting game or in game.
+  // event.returnValue = "you wanna leave? " -- use if in game
+})
 
 window.onload = init;

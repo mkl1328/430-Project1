@@ -13,7 +13,7 @@ const respondJSON = (request, response, status, object) => {
 //   response.end();
 // };
 
-const newGame = (request, response) => {
+const newGame = (request, response, params) => {
   //make new code
   let newCode
   do {
@@ -26,8 +26,8 @@ const newGame = (request, response) => {
     waiting: true,
     players: {
       p1: {
-        face: null, // number (for image)
-        name: null, //string of name.
+        face: params.face, // number (for image)
+        name: params.name, //string of name.
         response: null,
         submittedWord: null,
         wasTheSame: false,
