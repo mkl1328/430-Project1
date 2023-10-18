@@ -1,7 +1,14 @@
-const localData = {
-  inGame : false,
-  player : null,
-  
+let localData = {}
+
+const resetLocalData = () => {
+  localData = {
+    name: 'guest',
+    face: 1,
+    inGame : false,
+    player : null,
+    words : {},
+    gameCode : null,
+  }
 }
 
 const handleResponse = async (response) => {
@@ -15,8 +22,12 @@ const handleResponse = async (response) => {
 
 
 //Updates game list on homepage with data from lookForGames()
-const updateGameList = () => {
-
+const updateGameList = async (response) => {
+  let obj = await response.json();
+  if(JSON.stringify(obj) === '{}') return;
+  console.log(obj);
+  // obj.activeCodes
+  //TODO make these into list (scrollable.)
 }
 
 //Long polling on home page
@@ -34,18 +45,24 @@ const lookForGames = async () => {
     await lookForGames();
   } else if (response.status != 200) {
     console.log(response.statusText)
-    // IDK if this is needed???
+    // IDK if this is needed??? (below)
     // used on the website I learned about long polling from
     // await new Promise(resolve => setTimeout(resolve, 1000))
     await lookForGames();
   } else {
-    // TODO!!
-    // update game list with response data
+    updateGameList(response)
     await lookForGames();
   }
 }
 
-const init = () => {
+const init = async () => {
+  resetLocalData();
+  //TODO load in face and name from local storage (or set to default - 1 & guest)
+
+  //Populate current open games
+  const response = await fetch('/getGameList')
+  updateGameList(response)
+
   // Set all buttons to send fetch requests
   const newGameButton = document.querySelector("#make-new-game");
 
@@ -60,7 +77,18 @@ const init = () => {
       },
     });
     if (response.status === 201) {
+      localData.inGame = true;
+      localData.player = 'p1';
+      document.querySelector('#home-page').classList.remove('active');
+      document.querySelector('#game-page').classList.add('active');
 
+      let obj = await response.json()
+      localData.gameCode = obj.code;
+
+      //TODO
+      // INDICATE  wait for other player.
+      
+      //Call long poll for /getotherplayer
     } else {
       newGameButton.disabled = false;
       alert('There was an issue making your game. Please try again.')
@@ -68,6 +96,7 @@ const init = () => {
   }
 
   newGameButton.addEventListener("click", createNewGame);
+  lookForGames();
 }
 
 window.onload = init;

@@ -68,7 +68,7 @@ header > h1 {
 }
 
 /* Gamepage */
-#game-screen {
+#game-page {
   grid-template-columns: 2fr 5fr;
   grid-template-areas: "sidebar game";
 }
