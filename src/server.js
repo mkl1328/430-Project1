@@ -6,11 +6,18 @@ const jsonHandler = require('./jsonResponses.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
+const currentPlayers = {} // For all of the responses for long polling.
+
 const urlStruct = {
   '/': htmlHandler.getIndex,
   '/style.css': htmlHandler.getCSS,
   '/bundle.js': htmlHandler.getBundle,
   notFound: jsonHandler.notFound,
+  //newgame
+  //joingame
+  //submitmessage
+  //itwasthesame
+  //playagain // Implement last -- might not add (not enuf time)
 };
 
 //Change to long polling!!! (unless client is asking for html, css, or bundle.)

@@ -1,0 +1,173 @@
+/* Colors: 
+    F06449 - Red
+    EDE6E3 - light
+    DADAD9 - mid
+    36382E - dark
+    5BC3EB - blue
+*/
+
+/* DEBUG */
+* {
+  border: red dashed 1px;
+}
+
+body { 
+  margin : 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+}
+
+header {
+  /* BKG color */
+  background-color: #36382E;
+  color: #EDE6E3;
+  width: 100%;
+  height: 5%;
+}
+
+header > h1 {
+  margin: 0;
+  padding-top: 5px;
+  text-align: center;
+  font-size: 25px;
+}
+
+#scenes {
+  height: 95%;
+}
+
+#scenes > div {
+  display: none;
+  height: 100%;
+}
+
+#scenes > div.active {
+  display: grid;  
+}
+
+/* Homepage */
+#home-page {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 6fr 4fr;
+  grid-template-areas: "you   games"
+                       "stats games";
+}
+
+#you {
+  grid-area: you;
+}
+
+#stats {
+  grid-area: stats;
+}
+
+#game-finder {
+  grid-area: games;
+}
+
+/* Gamepage */
+#game-screen {
+  grid-template-columns: 2fr 5fr;
+  grid-template-areas: "sidebar game";
+}
+
+#game-sidebar {
+  display: grid;
+  grid-area: sidebar;
+  grid-template-rows: 1fr 1fr 1fr 10fr 1fr 4fr 1fr;
+  grid-template-areas: "."
+                       "homeButton" 
+                       "." 
+                       "rules" 
+                       "." 
+                       "closeEnough" 
+                       ".";
+} 
+
+#home-button {
+  grid-area: homeButton;
+}
+
+#rules {
+  position: relative;
+  grid-area: rules;
+  margin: 0 8px;
+  max-height: 100%;
+  overflow: hidden;
+}
+#rules > h1 {
+  margin: 0.3em 0;
+}
+#rules-text {
+  height: 90%;
+  overflow: auto;
+}
+#rules-text > p {
+  margin: 0;
+}
+
+#correction-panel {
+  grid-area: closeEnough;
+}
+
+#game {
+  display: grid;
+  grid-area: game;
+  height: 100%;
+  grid-template-rows: 1fr 3fr 2fr 10fr;
+  grid-template-areas: "topbar"
+                       "input"
+                       "waitingInfo" 
+                       "playArea";
+}
+
+#messages-window {
+  position: relative;
+  /* ^ So that I can add a gradient to the top for fading the messages */
+  grid-area: playArea;
+  overflow: auto;
+  padding: 10px;
+}
+
+#message-grid {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+#enter-word-section {
+  grid-area: input;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+}
+
+#word-input {
+  margin: auto;
+  font-size: 2em;
+}
+
+#top-game-bar {
+  display: grid;
+  grid-area: topbar;
+  grid-template-columns: 45% 10% 45%;
+  grid-template-areas: "otherplayer turnCount thisplayer";
+}
+
+#other-player {
+  grid-area: otherplayer;
+}
+
+#this-player {
+  grid-area: thisplayer;
+}
+
+#turn-count { 
+  grid-area: turnCount;
+}
+
+#win-overlay {
+  display: none;
+}

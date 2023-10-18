@@ -8,6 +8,65 @@
   <script src="/bundle.js"></script>
 </head>
 <body>
-  <!-- MAKE THE GAME -->
+  <header>
+    <h1>Say The Same Thing!</h1>
+  </header>
+  <div id="scenes">
+    <!-- Remove active later (maybe if code generated) -->
+    <div id="home-page" >
+      <div id="you">
+        
+      </div>
+      <div id="stats"></div>
+      <div id="game-finder">
+        <p></p>
+        <button id="make-new-game"></button>
+        <div id="game-list"></div>
+      </div>
+    </div>
+    <div id="game-screen" class="active">
+      <div id="game-sidebar"> 
+        <button id="home-button"></button>
+        <div id="rules">
+          <h1>Rules:</h1>
+          <!-- Maybe turn first half to list -->
+          <div id="rules-text">
+            <p>
+              1. Begin the game by entering any word you can think of. <br>
+              2. Each time When each other. <br>
+              3. If you said the same word, You win!! <br>
+              4. If not, play repeats, and each player comes up with a new word that relates to both of the previous words you came up with. <br>
+              5. Continue coming up with words until you say the same thing! <br>
+                <br>
+              - If you come up with a word that you both think is essentially the same thing (ie: game & games) you can hit the button below.<br>
+              - This button acts as a "close enough" button. And if both players agree that what you said is basically the same thing, You win!
+            </p>
+          </div>
+        </div>
+        <div id="correction-panel">
+          <button id="it-was-the-same"></button>
+        </div>
+      </div>
+      <div id="game">
+        <div id="top-game-bar">
+          <div id="other-player"></div>
+          <div id="turn-count"></div>
+          <div id="this-player"></div>
+        </div>
+        <div id="enter-word-section">
+          <input type="text" placeholder="Type a word..." id="word-input">
+        </div>
+        <div id="messages-window">
+          <div id="message-grid"></div>
+        </div>
+        <div id="win-overlay">
+          <h1>YOU WON!</h1>
+          <h2>It took you and ___ xx turns!</h2>
+          <!-- PLAY AGAIN button -->
+          <!-- GO HOME button -->
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
