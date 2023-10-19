@@ -67,6 +67,17 @@ header > h1 {
   grid-area: games;
 }
 
+#new-game-button-container {
+  height: 10%
+}
+
+#game-list {
+  display: flex;
+  flex-direction: column;
+  height: 90%;
+  overflow: auto;
+}
+
 /* Gamepage */
 #game-page {
   grid-template-columns: 2fr 5fr;

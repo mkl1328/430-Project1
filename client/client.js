@@ -24,7 +24,6 @@ const handleResponse = async (response) => {
 
 //Updates game list on homepage with data from lookForGames()
 const updateGameList = async (response) => {
-  console.log('recieved response + updating')
   const gameList = document.querySelector("#game-list"); 
   gameList.innerHTML = "";
 
@@ -67,20 +66,22 @@ const updateGameList = async (response) => {
 
         document.querySelector('#home-page').classList.remove('active');
         document.querySelector('#game-page').classList.add('active');
+
+        //TODO populate topbar with other player's info
       }
     })
     //Ideally button is stylized like a green play button or something.
     gameList.appendChild(gameBannerTemplate);
   }
-  //TODO make these into list (scrollable.)
-  //Maybe use an html template? 
-  // after template is built, add event listener to button.
 }
 
 //Long polling on home page
 const lookForGames = async () => {
   console.log('entered longpoll')
-  let response = await fetch('/lookForGames', {
+  //This key  was for debugging, but it magically made everything work. IDK why.
+  let key = Math.floor(Math.random() * 1000);
+  // console.log("key: "+ key);
+  let response = await fetch(`/lookForGames?key=${key}`, {
     method: 'GET',
     headers: {
       'Accept': 'application/json',
@@ -95,17 +96,18 @@ const lookForGames = async () => {
 
   if (response.status == 502) {
     console.log("request timed out");
-    await lookForGames();
+    lookForGames();
   } else if (response.status != 200) {
     console.log(response.statusText)
     console.log("searching again")
     // IDK if this is needed??? (below)
-    // used on the website I learned about long polling from
+    // used on the website I learned about long polling from 
     // await new Promise(resolve => setTimeout(resolve, 1000))
-    await lookForGames();
+    lookForGames();
   } else {
+    console.log('success found games')
     updateGameList(response)
-    await lookForGames();
+    lookForGames();
   }
 }
 
@@ -113,6 +115,7 @@ const lookForGames = async () => {
 
 const init = async () => {
   resetLocalData();
+  lookForGames();
 
   //Populate current open games
   const response = await fetch('/getGameList')
@@ -127,11 +130,11 @@ const init = async () => {
     const response = await fetch(`/newGame?name=${localData.name}&face=${localData.face}`, {
       method: 'POST',
       headers: {
-        'Accept': 'application/json',
+        'Accept': 'application/json',   
       },
     });
     if (response.status === 201) {
-      localData.inGame = 'waiting';
+      localData.state = 'waiting';
       localData.player = 'p1';
       document.querySelector('#home-page').classList.remove('active');
       document.querySelector('#game-page').classList.add('active');
@@ -150,15 +153,21 @@ const init = async () => {
   }
 
   newGameButton.addEventListener("click", createNewGame);
-  lookForGames();
+
+  window.addEventListener("beforeunload", () => {
+    console.log(localData.gameCode, localData.state);
+    if(localData.gameCode && localData.state !== 'home'){
+      console.log('quitting');
+      fetch(`/quitGame?code=${localData.gameCode}`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+        },
+      });
+    } 
+    resetLocalData();
+    //only do so if in a game
+  })
 }
 
-window.addEventListener("beforeunload", async (event) => {
-  
-  //if(localData.gameCode && localData.state !== 'home') await fetch(`/quitGame?code=${localData.gameCode}`)
-  resetLocalData();
-  //only do so if in a game
-  event.returnValue = "you're about to leave this page. doing so will close your game!"
-})
-
-window.onload = init;
+window.onload = init; 

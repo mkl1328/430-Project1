@@ -20,6 +20,7 @@ const urlStruct = {
   '/getGameList': jsonHandler.getGameList,
   '/lookForGames': jsonHandler.lookForGames,
   '/joinGame': jsonHandler.joinGame,
+  '/quitGame': jsonHandler.quitGame,
   //submitmessage
   // getmessage
   //itwasthesame
