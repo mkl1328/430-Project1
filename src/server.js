@@ -16,13 +16,13 @@ const urlStruct = {
   '/bundle.js': htmlHandler.getBundle,
   notFound: jsonHandler.notFound,
   '/newGame': jsonHandler.newGame,
-  //Get other player
+  '/getOtherPlayer': jsonHandler.getOtherPlayer,
   '/getGameList': jsonHandler.getGameList,
   '/lookForGames': jsonHandler.lookForGames,
   '/joinGame': jsonHandler.joinGame,
   '/quitGame': jsonHandler.quitGame,
-  //submitmessage
-  // getmessage
+  '/sendMessage': jsonHandler.sendMessage,
+  '/getMessage': jsonHandler.getMessage,
   //itwasthesame
   //playagain // Implement last -- might not add (not enuf time)
 };

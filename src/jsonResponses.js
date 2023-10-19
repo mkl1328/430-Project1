@@ -24,6 +24,7 @@ const newGame = (request, response, params) => {
   games[newCode] = {
     turns: 0,
     waiting: true,
+    readyToCompare: false,
     players: {
       p1: {
         face: params.face, // number (for image)
@@ -52,6 +53,25 @@ const newGame = (request, response, params) => {
   updateGameList();
 }
 
+const getOtherPlayer = (request, response, params) => {
+  //add response to player1.response
+  games[params.code].players.p1.response = response;
+
+  //not sure if request is necessary.
+}
+
+const gotOtherPlayer = (params) => {
+  const responseJSON = {
+    message: "partner found!",
+    player: {
+      name: params.name,
+      face: params.face,
+    }
+  }
+
+  respondJSON(null, games[params.code].players.p1.response, 200, responseJSON);
+}
+
 const joinGame = (request, response, params) => {
   const responseJSON = {
     message: 'Game was not found. Please Try again',
@@ -61,21 +81,23 @@ const joinGame = (request, response, params) => {
   if(!games[params.code] || !games[params.code].waiting) {
     return respondJSON(request, response, 404, responseJSON)
   } else {
+    //closes game from others joining.
+    games[params.code].waiting = false;
+    //store player in games obj.
     const players = games[params.code].players;
     players.p2.face = params.face;
     players.p2.name = params.name;
 
     responseJSON.message = 'Game was successfully joined!';
-    responseJSON.player1 = {
+    responseJSON.player = {
         name: players.p1.name,
         face: players.p1.face,
       };
-      console.log(responseJSON)
-    //closes game from others joining.
-    games[params.code].waiting = false;
     
     respondJSON(request, response, 201, responseJSON)
     updateGameList();  
+    
+    gotOtherPlayer(params);
   }
 }
 
@@ -101,7 +123,6 @@ const quitGame = (request, response, params) => {
 }
 
 const makeGameList = () => {
-  if(JSON.stringify(games) === "{}") return {};
   const obj = {};
   for(let game in games) {
     if (!games[game].waiting) continue;
@@ -118,7 +139,6 @@ const makeGameList = () => {
 //Call when a game opens, a game fills, and when a potential game closes.
 const updateGameList = () => {
   const responseJSON = makeGameList()
-  // console.dir(lookingPlayers);
 
   //While might break if more requests come in while this is going. 
   for (let i = lookingPlayers.length - 1; i >= 0; i--) {
@@ -142,11 +162,89 @@ const lookForGames = (request, response, params) => {
     response : response
   })
   console.log('length : ' + lookingPlayers.length, "key: " + params.key);
-  // console.log(request);
 
   //I'm still not sure why some responses were dropped / why it was taking so long for the server to pick up the requests, however what changed when it started working was, 
   // - I added params to the parameteres above.
   // - I sent a key value in the parsed url. 
+}
+
+//Logs response for future (long polling)
+const getMessage = (request, response, params) => {
+  console.log(games[params.code])
+  if(games[params.code]) {
+    games[params.code].players[params.player].response = response;
+  }
+}
+
+const recieveMessage = (response) => {
+  const responseJSON = {
+    updateType: 'recievedWord',
+  }
+  respondJSON(null, response, 200, responseJSON)
+}
+
+const sendRound = (response, game) => {
+  const responseJSON = {
+    updateType: 'roundOver',
+    words: {
+      p1: game.players.p1.submittedWord,
+      p2: game.players.p2.submittedWord,
+    },
+    turn: game.turns, 
+  }
+  respondJSON(null, response, 200, responseJSON);
+}
+
+//TODO
+const winGame = (response, game) => {
+  //Send winning word 
+  // (or words in case of a close enough) // Dont implement till later
+  // pass turns
+}
+
+//cleans up sent string
+const unifyWord = (word) => {
+  // TODO
+  // remove leading and trailing spaces
+  //remove any non-alphabetic keys
+  //All UPPERCASE
+
+  // return word
+}
+
+const sendMessage = (request, response, params) => {
+  const responseJSON = {
+    message: "Message stored successfully"
+  }
+  if(games[params.code]) {
+    let game = games[params.code];
+    //Log message to right person
+    game.players[params.player].submittedWord = unifyWord(params.message);
+  
+    if(!game.readyToCompare) {
+      game.readyToCompare = true;
+      //TODO
+      // resolve getMessage for other player by sending an update.
+      recieveMessage(game.players[params.player === "p1"? "p1" : "p2"].response);
+    } else {
+      //Reset for next round.
+      game.readyToCompare = false;
+      
+      //compare + check for win.
+      const theSame = game.players.p1.submittedWord === game.players.p2.submittedWord;
+      if(theSame) {
+        //WIN STUFF
+      } else {
+        sendRound(game.players.p1.response, game);
+        sendRound(game.players.p2.response, game);
+
+        game.players.p1.submittedWord = null;
+        game.players.p2.submittedWord = null;
+      }
+    }
+  }
+
+  respondJSON(request, response, 204, responseJSON)
 }
 
 const notFound = (request, response) => {
@@ -159,9 +257,12 @@ const notFound = (request, response) => {
 
 module.exports = {
   newGame,
+  getOtherPlayer,
   joinGame,
   quitGame,
   lookForGames,
   getGameList,
+  getMessage,
+  sendMessage,
   notFound,
 }
