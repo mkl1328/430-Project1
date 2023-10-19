@@ -6,12 +6,37 @@
     5BC3EB - blue
 */
 
+/* Kaph colors
+    001f49 - bkg
+*/
+
+@font-face {
+  font-family: 'ZeroCool';
+  src: url('../getFont?font=zerocool') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Kaph-Regular';
+  src: url('../getFont?font=kaph') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.zero {
+  font-family: 'ZeroCool';
+  font-size: 1.3em;
+}
+
 /* DEBUG */
 * {
-  border: red dashed 1px;
+  /* border: red dashed 1px; */
+  font-family: 'Kaph-Regular', sans-serif;
+  /* font-family: 'ZeroCool', sans-serif; */
 }
 
 body { 
+  background-color: #efe6c9;
   margin : 0;
   display: flex;
   flex-direction: column;
@@ -20,22 +45,21 @@ body {
 }
 
 header {
-  /* BKG color */
-  background-color: #36382E;
-  color: #EDE6E3;
+  background-color: #ebda9c;
   width: 100%;
-  height: 5%;
+  height: 10%;
 }
 
 header > h1 {
-  margin: 0;
-  padding-top: 5px;
+  color: #df9740;
+  margin: auto;
+  padding-top: 0.5rem;
   text-align: center;
-  font-size: 25px;
+  font-size: 3em;
 }
 
 #scenes {
-  height: 95%;
+  height: 90%;
 }
 
 #scenes > div {
@@ -49,38 +73,122 @@ header > h1 {
 
 /* Homepage */
 #home-page {
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 6fr 4fr;
-  grid-template-areas: "you   games"
-                       "stats games";
+  grid-template-columns: 5fr 6fr;
+  grid-template-rows: 3fr 2fr;
+  grid-template-areas: "you    games"
+                       "stats  games";
+}
+
+#profile {
+  grid-area: you;
 }
 
 #you {
-  grid-area: you;
+  margin-left: 10%;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  grid-template-rows: 3fr 2fr;
+}
+
+#you-frame{
+  margin-top: 3rem;
+  width: 250px;
+  height: 250px;
+  border: #25231c 10px solid;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+#you-frame > img {
+  width: 250px;
+  height: auto;
+}
+
+#name-box {
+  margin-top: 6rem;
+  margin-left: 2rem;
+  background-color: #efe6c9;
+  border: 0px;
+  border-bottom: 3px solid #3d3a30;
+  color: #25231c;
+  font-size: 3em;
+  width: 80%;
+  padding: 10px;
+  padding-bottom: 0px;
+}
+
+#name-box:focus {
+  outline: none;
+  background-color: #e1d6b1;
+  border-radius: 20px 20px 0px 0px;
 }
 
 #stats {
   grid-area: stats;
+  margin-left: 10%;
 }
 
 #game-finder {
   grid-area: games;
+  margin-right: 10%
 }
 
 #new-game-button-container {
-  height: 10%
+  height: 10%;
+  font-family: 'ZeroCool', sans-serif;
+  margin: 3%;
+  margin-bottom: 1%;
+  display: flex;
+  justify-content: center;
+}
+
+#make-new-game {
+  background-color: #da7939;
+  color: #faf7eb;
+  border: 0px;
+  border-radius: 30px;
+  height: 6em;
+}
+
+#make-new-game:hover {
+  background-color: #c95a2b;
+  color: #f1e5d2;
+}
+
+#make-new-game:active {
+  background-color: #9f4621;
+  color: #c9bead;
+}
+
+#make-new-game > h1 {
+  text-align: center;
+  font-size: 2.5em;
+  margin: 0.2em 0.4em;
+  margin-top: 0.1em
+}
+
+#make-new-game > h1 > span {
+  font-family: 'ZeroCool';
+  font-size: 1.3em;
+}
+
+#game-list-container {
+  height: 80%;
+  padding:1rem;
 }
 
 #game-list {
+  background-color: #cec39d;
   display: flex;
   flex-direction: column;
-  height: 90%;
+  height: 100%;
   overflow: auto;
+  border-radius: 15px;
 }
 
 /* Gamepage */
 #game-page {
-  grid-template-rows: 95%;
+  grid-template-rows: 90%;
   grid-template-columns: 2fr 5fr;
   grid-template-areas: "sidebar game";
 }
@@ -88,26 +196,53 @@ header > h1 {
 #game-sidebar {
   display: grid;
   grid-area: sidebar;
-  grid-template-rows: 1fr 1fr 1fr 10fr 1fr 4fr 1fr;
-  grid-template-areas: "."
-                       "homeButton" 
-                       "." 
-                       "rules" 
-                       "." 
-                       "closeEnough" 
-                       ".";
+  grid-template-rows: 10fr 3fr;
+  grid-template-areas: "rules"
+                       "homeButton" ;
+
+  padding-left: 7rem;
+  padding-top: 5rem
 } 
 
 #home-button {
+  margin: auto;
   grid-area: homeButton;
+  background-color: #7d7249;
+  color:#efe6c9;
+  font-size: 3rem;
+  width: 75px;
+  height: 75px;
+  border-radius: 40%;
+  border: 0px;
+  padding-right: 7px;
+  padding-bottom: 15px;
+}
+
+#home-button:hover {
+  background-color: #3d3a30;
+  color:#ada072;
+}
+
+#home-button:active {
+  background-color: #302c20;
+  color:#8f8357
+}
+
+#home-button > span {
+  display:block;
+  position: relative;
+  bottom: 3px;
 }
 
 #rules {
+  background-color: #e1d6b1;
+  padding: 20px;
   position: relative;
   grid-area: rules;
   margin: 0 8px;
   max-height: 100%;
   overflow: hidden;
+  border-radius: 30px;
 }
 #rules > h1 {
   margin: 0.3em 0;
@@ -118,6 +253,10 @@ header > h1 {
 }
 #rules-text > p {
   margin: 0;
+  margin-left: 20px;
+  line-height: 2rem;
+  
+  text-indent: -20px;
 }
 
 #correction-panel {
@@ -133,6 +272,9 @@ header > h1 {
                        "input"
                        "waitingInfo" 
                        "playArea";
+  padding: 1rem 5rem;
+  padding-right: 10rem;
+  padding-top: 2rem;
 }
 
 #messages-window {
@@ -178,6 +320,11 @@ header > h1 {
   grid-template-areas: "thisplayer turnCount otherplayer";
 }
 
+.player-tag {
+  display : flex;
+  column-gap: 15px;
+}
+
 .player-tag > img {
   height:80px;
   width:80px;
@@ -187,19 +334,34 @@ header > h1 {
 }
 
 #this-player {
+  margin-left: 5rem;
   grid-area: thisplayer;
-  display : flex;
   flex-direction: row;
 }
 
 #other-player {
+  margin-right: 5rem;
   grid-area: otherplayer;
-  display : flex;
   flex-direction: row-reverse;
 }
 
 #turn-count { 
+  background-color: #302c20;
+  color:#faf7eb;
+  border-radius: 50%;
+  border: #3c3725 solid 10px;
   grid-area: turnCount;
+  text-align: center;
+  text-justify: center;
+}
+
+#turn-count > h2 {
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+#turns {
+  margin: 0px;
 }
 
 #win-overlay {
@@ -226,3 +388,22 @@ game-banner > img {
 /* game-banner > button {
   
 } */
+
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ada072;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #c2b890;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #7d7249;
+}

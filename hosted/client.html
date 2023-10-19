@@ -3,55 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Say The Same Thing!💬</title>
+  <title>Say The Same Thing! 💬</title>
   <link rel="stylesheet" type="text/css" href="/style.css">
   <script src="/bundle.js"></script>
 </head>
 <body>
   <header>
-    <h1>Say The Same Thing!</h1>
+    <h1>Say The Same Thing! <span class="zero">💬</span></h1>
   </header>
   <div id="scenes">
     <!-- Remove active later (maybe if code generated) -->
     <div id="home-page" class="active">
-      <div id="you">
-        <img src="/getFace?face=1" alt="Profile Pic!">
-        <input type="text" value="Guest" id="name-box" maxlength="15">
+      <div id="profile">
+        <div id="you">
+          <div id="you-frame">
+            <img src="/getFace?face=1" alt="Profile Pic!">
+          </div>
+          <div id="you-right-panel">
+            <input type="text" value="Guest" id="name-box" maxlength="10">
+            <div id="colorSelect"></div>
+          </div>
+        </div>
       </div>
       <div id="stats"></div>
+      <div id="separater"></div>
       <div id="game-finder">
         <div id="new-game-button-container">
           <button id="make-new-game">
-            <h1>NEW GAME!</h1>
+            <h1>NEW GAME <span class="zero">🎮</span></h1>
           </button>
         </div>
-        <div id="game-list"></div>
+        <div id="game-list-container">
+          <div id="game-list"></div>
+        </div>
       </div>
     </div>
     <div id="game-page">
       <div id="game-sidebar"> 
-        <button id="home-button"></button>
+        <button id="home-button"><span class="zero">🏠</span></button>
         <div id="rules">
           <h1>Rules:</h1>
           <!-- Maybe turn first half to list -->
           <div id="rules-text">
-            <p>
-              1. Begin the game by entering any word you can think of. <br>
-              2. When both players enter a word, they will be displayed to each other. <br>
-              3. If you said the same word, You win!! <br>
-              4. If not, play continues, and each player comes up with a new word that relates to both of the previous words you came up with. <br>
-              5. Continue coming up with words until you say the same thing! <br>
-              6. No repeat words!
-                <br>
-                <br>
-                <!-- Maybe omit this if I can't get to it -->
-              - If you come up with a word that you both think is essentially the same thing (ie: game & games) you can hit the button below.<br>
-              - This button acts as a "close enough" button. And if both players agree that what you said is basically the same thing, You win!
-            </p>
+            <p> - Type any word! <br></p>
+            <p> - After the first round, type a word that connects the two previous words! <br></p>
+            <p> - Words can only be A-Z (no spaces!) <br></p>
+            <p> - Words can be up to 25 letters long <br></p>
+            <p> - Words can't repeat! <br></p>
+            <p> - If you say the same thing, you win! <br></p>
           </div>
-        </div>
-        <div id="correction-panel">
-          <button id="it-was-the-same"></button>
         </div>
       </div>
       <div id="game">
@@ -60,7 +60,10 @@
             <img src="" alt="your face" id="this-face">
             <h1 id="this-name"></h1>
           </div>
-          <div id="turn-count"></div>
+          <div id="turn-count">
+            <h2>TURN</h2>
+            <h1 id="turns">1</h1>
+          </div>
           <div id="other-player" class="player-tag">
             <img src="" alt="other player's face" id="other-face">
             <h1 id="other-name"></h1>

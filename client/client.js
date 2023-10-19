@@ -21,11 +21,10 @@ const fillTopBar = (whichPlayer, face, name) => {
   document.querySelector(`#${whichPlayer}-name`).innerHTML = name;
 }
 
-//TODO
 const handleGameUpdates = (update) => {
-  //Switch case updateType
   switch (update.updateType) {
     case 'recievedWord' : 
+    //TODO
     // switch other person's bubble to ready
       break;
     case 'roundOver' : 
@@ -57,16 +56,21 @@ const handleGameUpdates = (update) => {
       //visual bubbles back to not ready
       break;
     case 'winGame' :
+      //TODO
       //display win screen -
         // add turn count, final word / words.
         //update stats
         //need button to go home / play again (if i have time)
       break;
     case 'quit' :
-      //other player quit
       //alert player (maybe a more graceful way) -- but for now alert is easy.
+      alert("Sorry, but you were disconnected with your partner! Sending you back to the home screen so you can play another game");
+      
       // send back to home
-      // reset local data 
+      document.querySelector('#home-page').classList.add('active');
+      document.querySelector('#game-page').classList.remove('active');
+
+      resetLocalData();
       break;
     default:
       console.log('something went wrong- updateType was not one of the four regular types. Check spelling: ' + update.updateType);
@@ -247,6 +251,25 @@ const init = async () => {
 
   //TODO
   //Home page stuff here (profile) + stats
+  //Name - on input, save to localstorage
+  //Dont forget to remove leading + trailing spaces;
+  // on lose focus, check that it's not empty. if it is, enter Guest
+
+  document.querySelector("#home-button").addEventListener('click', async () => {
+    if(localData.gameCode && localData.state !== 'home'){
+      console.log('quitting');
+      fetch(`/quitGame?code=${localData.gameCode}`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+        },
+      });
+    } 
+    resetLocalData();
+    document.querySelector('#home-page').classList.add('active');
+    document.querySelector('#game-page').classList.remove('active');  
+    newGameButton.disabled = false;
+  });
 
   const sendMessageButton = document.querySelector("#send-button");
   const messageBox = document.querySelector("#word-input");
@@ -294,8 +317,8 @@ const init = async () => {
   const sendMessage = async () => {
     // console.log('sending message')
     const word = messageBox.value.replace(/\s+|[^a-zA-Z]/g, '').toUpperCase();
-    //TODO
-    //Cross check against wrods array
+
+    //No repeat words!! 
     for(let storedWord of localData.words) {
       if(storedWord === word) {
         messageBox.value = ''
@@ -303,7 +326,7 @@ const init = async () => {
         return
       }
     }
-    //No repeat words!! 
+
     messageBox.placeholder = 'Type a word!'
     sendMessageButton.disabled = true;
     messageBox.disabled = true;
@@ -323,8 +346,8 @@ const init = async () => {
       console.log(response.statusText);
       sendMessageButton.disabled = false;
       messageBox.disabled = false;
-      //TODO
-      // Try again, something went wrong.
+      messageBox.placeholder = 'Try again, something went wrong';
+      messageBox.value = '';
     }
   }
   sendMessageButton.addEventListener("click", sendMessage)
@@ -343,7 +366,6 @@ const init = async () => {
   });
 
   window.addEventListener("beforeunload", () => {
-    console.log(localData.gameCode, localData.state);
     if(localData.gameCode && localData.state !== 'home'){
       console.log('quitting');
       fetch(`/quitGame?code=${localData.gameCode}`, {

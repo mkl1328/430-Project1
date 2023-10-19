@@ -1,6 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 
+const fonts = {
+  zerocool : fs.readFileSync(`${__dirname}/../media/ZeroCool.woff`),
+  kaph : fs.readFileSync(`${__dirname}/../media/Kaph-Regular.woff`),
+} 
+
 const serveFile = (response, file, contentType) => {
   response.writeHead(200, { 'Content-Type': contentType });
   response.write(file);
@@ -9,8 +14,8 @@ const serveFile = (response, file, contentType) => {
 
 const getFace = (request, response, params) => {
 
-  //TODO add ability to pick from 8(?) faces - use string template
-  //Less than 10 bc I dont want to deal with omitted leading 0's (could turn them to strings tbh..)
+  //TODO 
+  //Generalize for more images.
   const file = path.resolve(__dirname, `../media/face${params.face}.png`);
 
   fs.readFile(file, (err, data) => {
@@ -23,6 +28,11 @@ const getFace = (request, response, params) => {
   });
 }
 
+const getFont = (request, response, params) => {
+  serveFile(response, fonts[params.font], 'application/x-font-woff')
+}
+
 module.exports = {
   getFace,
+  getFont,
 }

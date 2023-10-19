@@ -117,8 +117,6 @@ const quitGame = (request, response, params) => {
 
     return respondJSON(request, response, 201, responseJSON)
   } else {
-    //TODO
-    //else notify other player and send them to home screen // Handled in the game loop on client's side -- just send back info in polling response.
     respondJSON(null, games[params.code].players.p1.response, 200, {updateType : 'quit'});
     respondJSON(null, games[params.code].players.p2.response, 200, {updateType : 'quit'});
 
