@@ -41,9 +41,17 @@ const handleGameUpdates = (update) => {
     case 'winGame' :
       //display win screen -
         // add turn count, final word / words.
+        //update stats
+        //need button to go home / play again (if i have time)
       break;
-    default :
-      console.log('something went wrong- updateType was not one of the three regular types. Check spelling: ' + update.updateType);
+    case 'quit' :
+      //other player quit
+      //alert player (maybe a more graceful way) -- but for now alert is easy.
+      // send back to home
+      // reset local data 
+      break;
+    default:
+      console.log('something went wrong- updateType was not one of the four regular types. Check spelling: ' + update.updateType);
       break;
   }
 }
@@ -101,6 +109,10 @@ const getOtherPlayer = async () => {
 
     fillTopBar('other', obj.player.face, obj.player.name)
     localData.state = 'inGame'
+
+    document.querySelector("#send-button").disabled = false;
+    document.querySelector("#word-input").disabled = false;
+
     gameLoop();
     return
   }
@@ -222,6 +234,7 @@ const init = async () => {
   // Functionality
   const createNewGame = async () => {
     newGameButton.disabled = true;
+    
     const response = await fetch(`/newGame?name=${localData.name}&face=${localData.face}`, {
       method: 'POST',
       headers: {
@@ -241,10 +254,10 @@ const init = async () => {
       localData.gameCode = obj.code;
 
       //TODO
-      // INDICATE  wait for other player.
+      //Add waiting overlay
+      sendMessageButton.disabled = true;
+      messageBox.disabled = true;
 
-      //Keep input disabled until other player joins.
-      
       getOtherPlayer()
     } else {
       newGameButton.disabled = false;
@@ -301,7 +314,6 @@ const init = async () => {
       });
     } 
     resetLocalData();
-    //only do so if in a game
   })
 }
 

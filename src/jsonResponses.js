@@ -102,7 +102,7 @@ const joinGame = (request, response, params) => {
 }
 
 const quitGame = (request, response, params) => {
-  const responseJSON = {
+  let responseJSON = {
     message: 'Game you\'re trying to quit doesn\'t exist'
   }
   //if game doesnt exist, stop.
@@ -118,6 +118,8 @@ const quitGame = (request, response, params) => {
   } else {
     //TODO
     //else notify other player and send them to home screen // Handled in the game loop on client's side -- just send back info in polling response.
+    
+
 
   }
 }
@@ -170,7 +172,6 @@ const lookForGames = (request, response, params) => {
 
 //Logs response for future (long polling)
 const getMessage = (request, response, params) => {
-  console.log(games[params.code])
   if(games[params.code]) {
     games[params.code].players[params.player].response = response;
   }
