@@ -2,6 +2,7 @@ const http = require('http');
 const url = require('url');
 const query = require('querystring');
 const htmlHandler = require('./htmlResponses.js');
+const mediaHandler = require('./mediaResponses.js')
 const jsonHandler = require('./jsonResponses.js');
 const { parse } = require('path');
 
@@ -25,6 +26,7 @@ const urlStruct = {
   '/getMessage': jsonHandler.getMessage,
   //itwasthesame
   //playagain // Implement last -- might not add (not enuf time)
+  '/meImg' : mediaHandler.getImage,
 };
 
 //Change to long polling!!! (unless client is asking for html, css, or bundle.)

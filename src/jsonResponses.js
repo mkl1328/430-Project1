@@ -55,8 +55,9 @@ const newGame = (request, response, params) => {
 
 const getOtherPlayer = (request, response, params) => {
   //add response to player1.response
-  games[params.code].players.p1.response = response;
-
+  if(games[params.code]) {
+    games[params.code].players.p1.response = response;
+  }
   //not sure if request is necessary.
 }
 
@@ -118,7 +119,7 @@ const quitGame = (request, response, params) => {
   } else {
     //TODO
     //else notify other player and send them to home screen // Handled in the game loop on client's side -- just send back info in polling response.
-    
+
 
 
   }
