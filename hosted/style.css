@@ -80,6 +80,7 @@ header > h1 {
 
 /* Gamepage */
 #game-page {
+  grid-template-rows: 95%;
   grid-template-columns: 2fr 5fr;
   grid-template-areas: "sidebar game";
 }
@@ -155,24 +156,37 @@ header > h1 {
   justify-content: center;
 }
 
-#word-input {
+#input-controls {
   margin: auto;
+  display: flex;
+  flex-direction: row;
+}
+
+#word-input {
   font-size: 2em;
+}
+
+#send-button {
+  font-size: 0.8em;
 }
 
 #top-game-bar {
   display: grid;
   grid-area: topbar;
   grid-template-columns: 45% 10% 45%;
-  grid-template-areas: "otherplayer turnCount thisplayer";
-}
-
-#other-player {
-  grid-area: otherplayer;
+  grid-template-areas: "thisplayer turnCount otherplayer";
 }
 
 #this-player {
   grid-area: thisplayer;
+  display : flex;
+  flex-direction: row;
+}
+
+#other-player {
+  grid-area: otherplayer;
+  display : flex;
+  flex-direction: row-reverse;
 }
 
 #turn-count { 

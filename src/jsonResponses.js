@@ -70,10 +70,11 @@ const joinGame = (request, response, params) => {
         name: players.p1.name,
         face: players.p1.face,
       };
+      console.log(responseJSON)
     //closes game from others joining.
     games[params.code].waiting = false;
     
-    respondJSON(request, response, 204, responseJSON)
+    respondJSON(request, response, 201, responseJSON)
     updateGameList();  
   }
 }
@@ -91,7 +92,7 @@ const quitGame = (request, response, params) => {
     responseJSON.message = 'Game closed successfully'
     updateGameList();
 
-    return respondJSON(request, response, 204, responseJSON)
+    return respondJSON(request, response, 201, responseJSON)
   } else {
     //TODO
     //else notify other player and send them to home screen // Handled in the game loop on client's side -- just send back info in polling response.
@@ -114,7 +115,7 @@ const makeGameList = () => {
   return obj;
 }
 
-//Call when a game opens and when a potential game closes.
+//Call when a game opens, a game fills, and when a potential game closes.
 const updateGameList = () => {
   const responseJSON = makeGameList()
   // console.dir(lookingPlayers);
@@ -128,10 +129,12 @@ const updateGameList = () => {
 
 }
 
+// For when the page loads.
 const getGameList = (request, response) => {
   respondJSON(request, response, 200, makeGameList());
 }
 
+//Long polling for searching for online waiting games.
 const lookForGames = (request, response, params) => {
   //queue lookers into array, and wait for new game to be made. 
   lookingPlayers.push({
@@ -141,7 +144,7 @@ const lookForGames = (request, response, params) => {
   console.log('length : ' + lookingPlayers.length, "key: " + params.key);
   // console.log(request);
 
-  //I'm still not sure why some were dropped, however what changed when it started working was, 
+  //I'm still not sure why some responses were dropped / why it was taking so long for the server to pick up the requests, however what changed when it started working was, 
   // - I added params to the parameteres above.
   // - I sent a key value in the parsed url. 
 }

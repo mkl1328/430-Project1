@@ -53,12 +53,21 @@
       </div>
       <div id="game">
         <div id="top-game-bar">
-          <div id="this-player"></div>
+          <div id="this-player">
+            <img src="" alt="your face" id="this-face">
+            <h1 id="this-name"></h1>
+          </div>
           <div id="turn-count"></div>
-          <div id="other-player"></div>
+          <div id="other-player">
+            <img src="" alt="other player's face" id="other-face">
+            <h1 id="other-name"></h1>
+          </div>
         </div>
         <div id="enter-word-section">
-          <input type="text" placeholder="Type a word..." id="word-input">
+          <div id="input-controls">
+            <input type="text" placeholder="Type a word..." id="word-input">
+            <button id="send-button"><h1>Send!</h1></button>
+          </div>
         </div>
         <div id="messages-window">
           <div id="message-grid"></div>

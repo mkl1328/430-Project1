@@ -12,6 +12,11 @@ const resetLocalData = () => {
   }
 }
 
+const fillTopBar = (whichPlayer, face, name) => {
+  //document.querySelector(`#${whichPlayer}-face`) // add correct picture based on number
+  document.querySelector(`#${whichPlayer}-name`).innerHTML = name;
+}
+
 const handleResponse = async (response) => {
   //Do the do
 }
@@ -56,10 +61,13 @@ const updateGameList = async (response) => {
         },
       });
 
-      if(response.status !== 204) {
+      if(response.status !== 201) {
         alert("This game is no longer available :( Try another!")
         updateGameList(await fetch('/getGameList'))
       } else {
+        console.log(response);
+        let obj = await response.json()
+        
         localData.state = "inGame"
         localData.player = "p2"
         localData.gameCode = gameCode
@@ -67,7 +75,9 @@ const updateGameList = async (response) => {
         document.querySelector('#home-page').classList.remove('active');
         document.querySelector('#game-page').classList.add('active');
 
-        //TODO populate topbar with other player's info
+        //TODO populate topbar with both player's info
+        fillTopBar('this', localData.face, localData.name);
+        fillTopBar('other', obj.player1.face, obj.player1.name);
       }
     })
     //Ideally button is stylized like a green play button or something.
@@ -138,6 +148,9 @@ const init = async () => {
       localData.player = 'p1';
       document.querySelector('#home-page').classList.remove('active');
       document.querySelector('#game-page').classList.add('active');
+      
+      //populate this player top bar.
+      fillTopBar('this', localData.face, localData.name);
 
       let obj = await response.json()
       localData.gameCode = obj.code;
@@ -145,6 +158,7 @@ const init = async () => {
       //TODO
       // INDICATE  wait for other player.
       
+      //TODO
       //Call long poll for /getotherplayer
     } else {
       newGameButton.disabled = false;
