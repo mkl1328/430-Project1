@@ -19,7 +19,7 @@ const urlStruct = {
   //Get other player
   '/getGameList': jsonHandler.getGameList,
   '/lookForGames': jsonHandler.lookForGames,
-  //joingame
+  '/joinGame': jsonHandler.joinGame,
   //submitmessage
   // getmessage
   //itwasthesame

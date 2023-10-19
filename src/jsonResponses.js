@@ -2,6 +2,7 @@ const games = {};
 const lookingPlayers = [];
 
 const respondJSON = (request, response, status, object) => {
+  console.log('here', status, object)
   response.writeHead(status, { 'Content-Type': 'application/json' });
   response.write(JSON.stringify(object));
   response.end();
@@ -49,8 +50,36 @@ const newGame = (request, response, params) => {
   }
   //TODO
   //Update lookForGame players.
+  console.log('about to update list')
   updateGameList();
   return respondJSON(request, response, 201, responseJSON)
+}
+
+const joinGame = (request, response, params) => {
+  let responseJSON = {
+    message: 'Game was not found. Please Try again',
+  }
+  
+  //Check if game exists and is still open. 
+  if(!games[params.code] || !games[params.code].waiting) {
+    return respondJSON(request, response, 404, responseJSON)
+  } else {
+    const players = games[params.code].players;
+    players.p2.face = params.face;
+    players.p2.name = params.name;
+
+    responseJSON = {
+      message: 'Game was successfully joined!',
+      player1: {
+        name: players.p1.name,
+        face: players.p1.face,
+      }
+    }
+    //closes game from others joining.
+    games[params.code].waiting = false;
+
+    return respondJSON(request, response, 204, responseJSON)
+  }
 }
 
 const makeGameList = () => {
@@ -73,7 +102,8 @@ const updateGameList = () => {
 
   //While might break if more requests come in while this is going. 
   for (let i = lookingPlayers.length - 1; i >= 0; i--) {
-    respondJSON(null, lookingPlayers[i], 200, responseJSON);
+    // console.log('responding to player:', lookingPlayers[i])
+    respondJSON(lookingPlayers[i].request, lookingPlayers[i].response, 200, responseJSON);
     lookingPlayers.splice(i, 1);
   }
 }
@@ -84,7 +114,10 @@ const getGameList = (request, response) => {
 
 const lookForGames = (request, response) => {
   //queue lookers into array, and wait for new game to be made. 
-  lookingPlayers.push(response)
+  lookingPlayers.push({
+    request: request,
+    response : response
+  })
 }
 
 const notFound = (request, response) => {
@@ -97,6 +130,7 @@ const notFound = (request, response) => {
 
 module.exports = {
   newGame,
+  joinGame,
   lookForGames,
   getGameList,
   notFound,
