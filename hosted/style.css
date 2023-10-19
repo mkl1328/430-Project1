@@ -147,6 +147,7 @@ header > h1 {
   display: flex;
   flex-direction: column;
   min-height: 0;
+  row-gap: 10px;
 }
 
 #enter-word-section {
@@ -177,6 +178,14 @@ header > h1 {
   grid-template-areas: "thisplayer turnCount otherplayer";
 }
 
+.player-tag > img {
+  height:80px;
+  width:80px;
+  border-radius: 50%;
+  border:#36382E solid 5px;
+  overflow: hidden;
+}
+
 #this-player {
   grid-area: thisplayer;
   display : flex;
@@ -196,3 +205,24 @@ header > h1 {
 #win-overlay {
   display: none;
 }
+
+word-turn {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+/* Might have to rework this so the button can sit to the right side */
+game-banner {
+  display: flex;
+  flex-direction: row;
+}
+
+game-banner > img {
+  height:80px;
+  width:80px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+/* game-banner > button {
+  
+} */

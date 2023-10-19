@@ -119,9 +119,11 @@ const quitGame = (request, response, params) => {
   } else {
     //TODO
     //else notify other player and send them to home screen // Handled in the game loop on client's side -- just send back info in polling response.
+    respondJSON(null, games[params.code].players.p1.response, 200, {updateType : 'quit'});
+    respondJSON(null, games[params.code].players.p2.response, 200, {updateType : 'quit'});
 
-
-
+    //remove game from games
+    delete games[params.code];
   }
 }
 
@@ -145,7 +147,7 @@ const updateGameList = () => {
 
   //While might break if more requests come in while this is going. 
   for (let i = lookingPlayers.length - 1; i >= 0; i--) {
-    console.log('iteration: ' + i);
+    // console.log('iteration: ' + i);
     respondJSON(lookingPlayers[i].request, lookingPlayers[i].response, 200, responseJSON);
     lookingPlayers.splice(i, 1);
   }
@@ -164,7 +166,7 @@ const lookForGames = (request, response, params) => {
     request: request,
     response : response
   })
-  console.log('length : ' + lookingPlayers.length, "key: " + params.key);
+  // console.log('length : ' + lookingPlayers.length, "key: " + params.key);
 
   //I'm still not sure why some responses were dropped / why it was taking so long for the server to pick up the requests, however what changed when it started working was, 
   // - I added params to the parameteres above.
@@ -185,9 +187,9 @@ const recieveMessage = (response) => {
   respondJSON(null, response, 200, responseJSON)
 }
 
-const sendRound = (response, game) => {
+const sendRound = (response, game, win) => {
   const responseJSON = {
-    updateType: 'roundOver',
+    updateType: win? 'winGame' : 'roundOver',
     words: {
       p1: game.players.p1.submittedWord,
       p2: game.players.p2.submittedWord,
@@ -197,22 +199,8 @@ const sendRound = (response, game) => {
   respondJSON(null, response, 200, responseJSON);
 }
 
-//TODO
-const winGame = (response, game) => {
-  //Send winning word 
-  // (or words in case of a close enough) // Dont implement till later
-  // pass turns
-}
-
-//cleans up sent string
-const unifyWord = (word) => {
-  // TODO
-  // remove leading and trailing spaces
-  //remove any non-alphabetic keys
-  //All UPPERCASE
-
-  // return word
-}
+//cleans up sent string again in case non-valid strings somehow make it to the server (direct url sending)
+const unifyWord = (word) => word.replace(/\s+|[^a-zA-Z]/g, '').toUpperCase();
 
 const sendMessage = (request, response, params) => {
   const responseJSON = {
@@ -222,20 +210,21 @@ const sendMessage = (request, response, params) => {
     let game = games[params.code];
     //Log message to right person
     game.players[params.player].submittedWord = unifyWord(params.message);
-  
+
     if(!game.readyToCompare) {
       game.readyToCompare = true;
-      //TODO
       // resolve getMessage for other player by sending an update.
       recieveMessage(game.players[params.player === "p1"? "p1" : "p2"].response);
     } else {
       //Reset for next round.
       game.readyToCompare = false;
-      
+      game.turns++;
       //compare + check for win.
       const theSame = game.players.p1.submittedWord === game.players.p2.submittedWord;
       if(theSame) {
-        //WIN STUFF
+        sendRound(game.players.p1.response, game, true);
+        sendRound(game.players.p2.response, game, true);
+        delete game;
       } else {
         sendRound(game.players.p1.response, game);
         sendRound(game.players.p2.response, game);

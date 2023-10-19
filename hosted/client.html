@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Say The Same Thing!</title>
+  <title>Say The Same Thing!💬</title>
   <link rel="stylesheet" type="text/css" href="/style.css">
   <script src="/bundle.js"></script>
 </head>
@@ -15,8 +15,8 @@
     <!-- Remove active later (maybe if code generated) -->
     <div id="home-page" class="active">
       <div id="you">
-        <img src="/meImg" alt="nose">
-        <input type="text" value="test">
+        <img src="/getFace?face=1" alt="Profile Pic!">
+        <input type="text" value="Guest" id="name-box" maxlength="15">
       </div>
       <div id="stats"></div>
       <div id="game-finder">
@@ -56,19 +56,19 @@
       </div>
       <div id="game">
         <div id="top-game-bar">
-          <div id="this-player">
+          <div id="this-player" class="player-tag">
             <img src="" alt="your face" id="this-face">
             <h1 id="this-name"></h1>
           </div>
           <div id="turn-count"></div>
-          <div id="other-player">
+          <div id="other-player" class="player-tag">
             <img src="" alt="other player's face" id="other-face">
             <h1 id="other-name"></h1>
           </div>
         </div>
         <div id="enter-word-section">
           <div id="input-controls">
-            <input type="text" placeholder="Type a word..." id="word-input" autocomplete="off">
+            <input type="text" placeholder="Type a word!" id="word-input" autocomplete="off" maxlength="25">
             <button id="send-button"><h1>Send!</h1></button>
           </div>
         </div>

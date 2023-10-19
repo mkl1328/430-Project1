@@ -5,8 +5,8 @@ let localData = {}
 
 const resetLocalData = () => {
   localData = {
-    name: localStorage.getItem('STST_name') || 'guest',
-    face: localStorage.getItem('STST_face') || 1,
+    name: localStorage.getItem('STST_name') || 'Guest',
+    face: localStorage.getItem('STST_face') || Math.ceil(Math.random()*8),
     //Stats
     state : 'home',
     player : null,
@@ -17,7 +17,7 @@ const resetLocalData = () => {
 }
 
 const fillTopBar = (whichPlayer, face, name) => {
-  //document.querySelector(`#${whichPlayer}-face`) // add correct picture based on number
+  document.querySelector(`#${whichPlayer}-face`).src = `/getFace?face=${face}` // add correct picture based on number
   document.querySelector(`#${whichPlayer}-name`).innerHTML = name;
 }
 
@@ -30,12 +30,30 @@ const handleGameUpdates = (update) => {
       break;
     case 'roundOver' : 
       //construct div with words
+      const wordTurn = document.createElement('word-turn');
+
+      wordTurn.innerHTML = `
+        <div> 
+          <p>${update.words[localData.player]}</p>
+        </div>
+        <div> 
+          <p>${update.words[localData.player === 'p1'? 'p2' : 'p1']}</p>
+        </div>
+      `
       //add to stack
+      wordTurn.style = `order: ${10000 - update.turn}`
+      document.querySelector("#message-grid").appendChild(wordTurn);
+
       //reopen message box + button
       document.querySelector("#send-button").disabled = false;
       document.querySelector("#word-input").disabled = false;
+      document.querySelector("#word-input").value = '';
+      //TODO
       //increment turn counter (data and on screen)
-      //Add words to localData.words
+      localData.turn = update.turn;
+
+      localData.words.push(update.words.p1, update.words.p2)
+      //TODO
       //visual bubbles back to not ready
       break;
     case 'winGame' :
@@ -131,11 +149,9 @@ const updateGameList = async (response) => {
     const gameBannerTemplate = document.createElement('game-banner');
 
     gameBannerTemplate.innerHTML = `
-      <div class="game-banner">
-        <img> </img>
-        <h1>${obj[gameCode].player.name}</h1>
-        <button data-code="${gameCode}"> <h1 data-code="${gameCode}">Join Game</h1> </button>
-      </div>
+      <img src="/getFace?face=${obj[gameCode].player.face}">
+      <h1>${obj[gameCode].player.name}</h1>
+      <button data-code="${gameCode}"> <h1 data-code="${gameCode}">Join Game</h1> </button>
     `
     //  ^  GameCode on both elements so I can grab it from either element regardless of where the player clicks.]
 
@@ -213,9 +229,13 @@ const lookForGames = async () => {
 }
 
 
-
+ 
 const init = async () => {
   resetLocalData();
+  //Store name and face to local storage
+  localStorage.setItem('STST_name', localData.name);
+  localStorage.setItem('STST_face', localData.face);
+
   lookForGames();
 
   //Populate current open games
@@ -231,10 +251,14 @@ const init = async () => {
   const sendMessageButton = document.querySelector("#send-button");
   const messageBox = document.querySelector("#word-input");
 
+  const nameBox = document.querySelector('#name-box');
+  nameBox.value = localData.name;
+
   // Functionality
   const createNewGame = async () => {
     newGameButton.disabled = true;
     
+    console.log(localData)
     const response = await fetch(`/newGame?name=${localData.name}&face=${localData.face}`, {
       method: 'POST',
       headers: {
@@ -268,11 +292,19 @@ const init = async () => {
 
 
   const sendMessage = async () => {
-    console.log('sending message')
+    // console.log('sending message')
+    const word = messageBox.value.replace(/\s+|[^a-zA-Z]/g, '').toUpperCase();
     //TODO
     //Cross check against wrods array
+    for(let storedWord of localData.words) {
+      if(storedWord === word) {
+        messageBox.value = ''
+        messageBox.placeholder = 'You can\'t reuse words!'
+        return
+      }
+    }
     //No repeat words!! 
-
+    messageBox.placeholder = 'Type a word!'
     sendMessageButton.disabled = true;
     messageBox.disabled = true;
 
@@ -296,11 +328,19 @@ const init = async () => {
     }
   }
   sendMessageButton.addEventListener("click", sendMessage)
-  messageBox.addEventListener("keydown", (event) => {
-    if(event.key === 'Enter') {
+  messageBox.addEventListener("keydown", (e) => {
+    if(e.key === 'Enter') {
       sendMessage();
     }
   })
+  messageBox.addEventListener('input', function (e) {
+    const inputText = e.target.value;
+    const filteredText = inputText.replace(/[^a-zA-Z]/g, '');
+  
+    if (inputText !== filteredText) {
+      e.target.value = filteredText;
+    }
+  });
 
   window.addEventListener("beforeunload", () => {
     console.log(localData.gameCode, localData.state);

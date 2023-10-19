@@ -26,7 +26,7 @@ const urlStruct = {
   '/getMessage': jsonHandler.getMessage,
   //itwasthesame
   //playagain // Implement last -- might not add (not enuf time)
-  '/meImg' : mediaHandler.getImage,
+  '/getFace' : mediaHandler.getFace,
 };
 
 //Change to long polling!!! (unless client is asking for html, css, or bundle.)
