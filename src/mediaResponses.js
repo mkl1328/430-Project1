@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const jsonHandler = require('./jsonResponses.js');
 
 const fonts = {
   zerocool : fs.readFileSync(`${__dirname}/../media/ZeroCool.woff`),
@@ -20,8 +21,7 @@ const getFace = (request, response, params) => {
 
   fs.readFile(file, (err, data) => {
     if (err) {
-      response.writeHead(404)
-      return response.end();
+      jsonHandler.notFound(request, response, params, 'Can\'t find the media you\'re looking for');
     }
     serveFile(response, data, 'image/x-png');
     // just make sure all of the faces are png (also lets me put colored bkgs!)
@@ -29,7 +29,10 @@ const getFace = (request, response, params) => {
 }
 
 const getFont = (request, response, params) => {
-  serveFile(response, fonts[params.font], 'application/x-font-woff')
+  if(fonts[params.font]) {
+    return serveFile(response, fonts[params.font], 'application/x-font-woff')
+  }
+  jsonHandler.notFound(request, response, params, 'The server doesn\'t host this font');
 }
 
 module.exports = {

@@ -1,15 +1,18 @@
 //GENERAL NOTES
-//Most likeley a better way to handle the different types of long polling.
+//Most likeley a better way to handle the different types of long polling. but due to time, I am keeping them separate.
+
+//There are still a few 'TODO' comments, but those are for a stat's page I didn't have time to implement, and want to in the future.
 
 let localData = {}
 
 const resetLocalData = () => {
   localData = {
     name: localStorage.getItem('STST_name') || 'Guest',
-    face: localStorage.getItem('STST_face') || Math.ceil(Math.random()*8),
+    face: localStorage.getItem('STST_face') || Math.ceil(Math.random()*4),
     //Stats
     state : 'home',
     player : null,
+    otherPlayer: null,
     words : [], //For repeat blocking
     turn: 0,
     gameCode : null,
@@ -21,7 +24,7 @@ const fillTopBar = (whichPlayer, face, name) => {
   document.querySelector(`#${whichPlayer}-name`).innerHTML = name;
 }
 
-const handleGameUpdates = (update) => {
+const handleGameUpdates = async (update) => {
   switch (update.updateType) {
     case 'recievedWord' : 
     // switch other person's bubble to ready
@@ -62,11 +65,46 @@ const handleGameUpdates = (update) => {
       document.querySelector("#my-ready-text").innerHTML = '. . .';
       break;
     case 'winGame' :
-      //TODO
+      const winningWord = update.words.p1 || update.words.p2;
+
       //display win screen -
-        // add turn count, final word / words.
+      const winScreen = document.querySelector("#win-overlay");
+
+      document.querySelector("#other-ready").classList.add('ready-message');
+      document.querySelector("#my-ready").classList.add('ready-message');
+      document.querySelector("#other-ready-text").innerHTML = winningWord;
+      document.querySelector("#my-ready-text").innerHTML = winningWord;
+
+      const wordGrid = document.querySelector("#message-grid");
+
+      wordGrid.removeChild(document.querySelector("#message-state-indicator"));
+      const finalWord = document.createElement('final-word');
+      finalWord.innerHTML = `
+        <div id="winning-word-bubble">
+          <p id="winning-word"></p>
+        </div>
+      ` 
+      wordGrid.appendChild(finalWord);
+
+      document.querySelector("#winning-word").innerHTML = winningWord
+
+      winScreen.classList.add("active");
+
+      document.querySelector("#results").innerHTML = `It took you and ${localData.otherPlayer} <span style="color:#dab42a">${localData.turn + 1}</span> turns to say the same thing!`
+      
+        //Add message box to win tab
+      let finalMessages = document.createElement('wordsList')
+      finalMessages.innerHTML = wordGrid.innerHTML;
+      document.querySelector("#replay").appendChild(finalMessages);
+      console.log(finalMessages)
+
+      //undisable inputs
+      document.querySelector("#send-button").disabled = false;
+      document.querySelector("#word-input").disabled = false;
+      document.querySelector("#word-input").value = '';
+
+        //future TODO
         //update stats
-        //need button to go home / play again (if i have time)
       break;
     case 'quit' :
       //alert player (maybe a more graceful way) -- but for now alert is easy.
@@ -77,8 +115,12 @@ const handleGameUpdates = (update) => {
       document.querySelector('#game-page').classList.remove('active');
       document.querySelector('#make-new-game').disabled = false;
 
+      resetBubbles();
+
       resetLocalData();
-      //No immediate reupdate // having issues
+      document.querySelector("#turns").innerHTML = localData.turn + 1
+      
+      updateGameList(await fetch('/getGameList'))
       lookForGames();
 
       break;
@@ -112,7 +154,7 @@ const gameLoop = async () => {
     handleGameUpdates(obj);
 
     console.log('message recieved')
-    return gameLoop();
+    if(obj.updateType !== 'quit') return gameLoop();
   }
 }
 
@@ -140,6 +182,7 @@ const getOtherPlayer = async () => {
     let obj = await response.json()
 
     fillTopBar('other', obj.player.face, obj.player.name)
+    localData.otherPlayer = obj.player.name
     localData.state = 'inGame'
 
     document.querySelector("#send-button").disabled = false;
@@ -194,6 +237,7 @@ const updateGameList = async (response) => {
         
         localData.state = "inGame"
         localData.player = "p2"
+        localData.otherPlayer = obj.player.name
         localData.gameCode = gameCode
 
         document.querySelector('#home-page').classList.remove('active');
@@ -248,7 +292,24 @@ const lookForGames = async () => {
   }
 }
 
-
+const resetBubbles = () => {
+  //reset bubbles
+  const oldMessages = document.querySelector("#message-grid");
+  while(oldMessages.firstChild) {
+    oldMessages.removeChild(oldMessages.firstChild);
+  }
+  const messageIndicator = document.createElement('word-turn')
+  messageIndicator.id = 'message-state-indicator'
+  messageIndicator.innerHTML = `
+    <div id="my-ready"> 
+      <p id="my-ready-text">. . .</p>
+    </div>
+    <div id="other-ready"> 
+      <p id="other-ready-text">. . .</p>
+    </div>
+    `
+  oldMessages.appendChild(messageIndicator);
+}
  
 const init = async () => {
   resetLocalData();
@@ -265,7 +326,7 @@ const init = async () => {
   // set up buttons
   const newGameButton = document.querySelector("#make-new-game");
 
-  //TODO
+  //future TODO
   //Home page stuff here (profile) + stats
 
   document.querySelector("#home-button").addEventListener('click', async () => {
@@ -313,7 +374,6 @@ const init = async () => {
       let obj = await response.json()
       localData.gameCode = obj.code;
 
-      //TODO
       //Add waiting overlay
       document.querySelector("#waiting-screen").classList.add('active')
       document.querySelector("#game").classList.remove('active')
@@ -403,6 +463,18 @@ const init = async () => {
     if(newName) {
       localStorage.setItem("STST_name", newName);
     }
+  })
+
+  document.querySelector("#okay-button").addEventListener('click', () => {
+    document.querySelector("#win-overlay").classList.remove('active')
+    resetLocalData();
+    document.querySelector("#turns").innerHTML = localData.turn + 1
+    document.querySelector('#home-page').classList.add('active');
+    document.querySelector('#game-page').classList.remove('active');  
+    newGameButton.disabled = false;
+    resetBubbles();
+    //Remove messagebox from win tab
+    lookForGames();
   })
 
   window.addEventListener("beforeunload", () => {

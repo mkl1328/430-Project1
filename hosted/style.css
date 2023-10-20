@@ -419,8 +419,88 @@ header > h1 {
   margin: 0px;
 }
 
+#win-overlay.active {
+  display: grid
+}
 #win-overlay {
-  display: none;
+  position: absolute;
+  display:none;
+  width:100%;
+  height:100%;
+  grid-template-columns: 2fr 1fr;
+  background-color: #da7939;
+  color:#faf7eb;
+  z-index: 100;
+}
+
+#win-message {
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* width:100%;
+  height:100%; */
+  
+}
+
+#win-message > h1 {
+  color:#dab42a;
+  font-size: 5em;
+  margin-bottom:0;
+  margin-top: 1em;
+}
+
+wordslist {
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  justify-items: center;
+}
+
+finalword {
+  order: -1000;
+}
+
+#winning-word-bubble {
+  background-color: #dab42a;
+  border-radius:2rem;
+  padding:1rem 2rem;
+  margin: 0.7rem 1.5rem;
+}
+#winning-word {
+  color: #faf7eb;
+  margin: 0;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+#results {
+  text-align: center;
+  display:block;
+  padding: 0 50px;
+}
+
+#replay {
+  display: flex;
+  align-items: center;
+  justify-items: center;
+}
+
+#okay-button {
+  order: 10;
+  border:0px;
+  border-radius: 50%;
+  padding:10px 15px;
+  background-color:#c95a2b;
+  color:#faf7eb;
+}
+#okay-button:hover {
+  background-color:#9f4621;
+  color:#dcdcdc;
+}
+#okay-button:active {
+  background-color: #3c3725;
+  color:#c9bead
 }
 
 #messages-window {

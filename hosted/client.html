@@ -11,6 +11,16 @@
   <header>
     <h1>Say The Same Thing! <span class="zero">💬</span></h1>
   </header>
+  <div id="win-overlay">
+    <div id="win-message">
+      <h1>YOU WON!</h1>
+      <h2 id="results">It took you and ___ xx turns!</h2>
+      <!-- PLAY AGAIN button -->
+      <button id="okay-button"><h1>OK!</h1></button>
+    </div>
+    <div id="replay"></div>
+  </div>
+
   <div id="scenes">
     <!-- Remove active later (maybe if code generated) -->
     <div id="home-page" class="active">
@@ -95,13 +105,6 @@
             </word-turn>
           </div>
         </div>
-      </div>
-
-      <div id="win-overlay">
-        <h1>YOU WON!</h1>
-        <h2>It took you and ___ xx turns!</h2>
-        <!-- PLAY AGAIN button -->
-        <!-- GO HOME button -->
       </div>
     </div>
   </div>

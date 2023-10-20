@@ -3,7 +3,7 @@ const lookingPlayers = [];
 
 const respondJSON = (request, response, status, object) => {
   response.writeHead(status, { 'Content-Type': 'application/json' });
-  response.write(JSON.stringify(object));
+  if(request.method !== 'HEAD') response.write(JSON.stringify(object));
   response.end();
 };
 
@@ -30,6 +30,7 @@ const newGame = (request, response, params) => {
         face: params.face, // number (for image)
         name: params.name, //string of name.
         response: null,
+        request: null,
         submittedWord: null,
         wasTheSame: false,
         playAgain: false,
@@ -38,6 +39,7 @@ const newGame = (request, response, params) => {
         face: null,
         name: null,
         response: null,
+        request: null,
         submittedWord: null,
         wasTheSame: false,
         playAgain: false,
@@ -57,6 +59,7 @@ const getOtherPlayer = (request, response, params) => {
   //add response to player1.response
   if(games[params.code]) {
     games[params.code].players.p1.response = response;
+    games[params.code].players.p1.request = request;
   }
   //not sure if request is necessary.
 }
@@ -70,7 +73,7 @@ const gotOtherPlayer = (params) => {
     }
   }
 
-  respondJSON(null, games[params.code].players.p1.response, 200, responseJSON);
+  respondJSON(games[params.code].players.p1.request, games[params.code].players.p1.response, 200, responseJSON);
 }
 
 const joinGame = (request, response, params) => {
@@ -117,11 +120,14 @@ const quitGame = (request, response, params) => {
 
     return respondJSON(request, response, 201, responseJSON)
   } else {
-    respondJSON(null, games[params.code].players.p1.response, 200, {updateType : 'quit'});
-    respondJSON(null, games[params.code].players.p2.response, 200, {updateType : 'quit'});
+    respondJSON(games[params.code].players.p1.request, games[params.code].players.p1.response, 200, {updateType : 'quit'});
+    respondJSON(games[params.code].players.p2.request, games[params.code].players.p2.response, 200, {updateType : 'quit'});
 
     //remove game from games
     delete games[params.code];
+
+    respondJSON.message = "quit successfully"
+    return respondJSON(request, response, 201, responseJSON)
   }
 }
 
@@ -175,17 +181,18 @@ const lookForGames = (request, response, params) => {
 const getMessage = (request, response, params) => {
   if(games[params.code]) {
     games[params.code].players[params.player].response = response;
+    games[params.code].players[params.player].request = request;
   }
 }
 
-const recieveMessage = (response) => {
+const recieveMessage = (request, response) => {
   const responseJSON = {
     updateType: 'recievedWord',
   }
-  respondJSON(null, response, 200, responseJSON)
+  respondJSON(request, response, 200, responseJSON)
 }
 
-const sendRound = (response, game, win) => {
+const sendRound = (request, response, game, win) => {
   const responseJSON = {
     updateType: win? 'winGame' : 'roundOver',
     words: {
@@ -194,7 +201,7 @@ const sendRound = (response, game, win) => {
     },
     turn: game.turns, 
   }
-  respondJSON(null, response, 200, responseJSON);
+  respondJSON(request, response, 200, responseJSON);
 }
 
 //cleans up sent string again in case non-valid strings somehow make it to the server (direct url sending)
@@ -212,7 +219,8 @@ const sendMessage = (request, response, params) => {
     if(!game.readyToCompare) {
       game.readyToCompare = true;
       // resolve getMessage for other player by sending an update.
-      recieveMessage(game.players[params.player === "p2"? "p1" : "p2"].response);
+      let sendToPlayer = game.players[params.player === "p2"? "p1" : "p2"] 
+      recieveMessage(sendToPlayer.request,sendToPlayer.response);
     } else {
       //Reset for next round.
       game.readyToCompare = false;
@@ -220,12 +228,12 @@ const sendMessage = (request, response, params) => {
       //compare + check for win.
       const theSame = game.players.p1.submittedWord === game.players.p2.submittedWord;
       if(theSame) {
-        sendRound(game.players.p1.response, game, true);
-        sendRound(game.players.p2.response, game, true);
+        sendRound(game.players.p1.request, game.players.p1.response, game, true);
+        sendRound(game.players.p2.request, game.players.p2.response, game, true);
         delete game;
       } else {
-        sendRound(game.players.p1.response, game);
-        sendRound(game.players.p2.response, game);
+        sendRound(game.players.p2.response, game.players.p1.response, game);
+        sendRound(game.players.p2.response, game.players.p2.response, game);
 
         game.players.p1.submittedWord = null;
         game.players.p2.submittedWord = null;
@@ -236,9 +244,9 @@ const sendMessage = (request, response, params) => {
   respondJSON(request, response, 204, responseJSON)
 }
 
-const notFound = (request, response) => {
+const notFound = (request, response, params, message) => {
   const responseJSON = {
-    message: 'The page you are looking for was not found.',
+    message: message || 'The page you are looking for was not found.',
     id: 'notFound',
   };
   return respondJSON(request, response, 404, responseJSON);

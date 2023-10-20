@@ -40,11 +40,9 @@ const urlStruct = {
     '/getGameList': jsonHandler.getGameList,
     '/lookForGames': jsonHandler.lookForGames,
     '/getMessage': jsonHandler.getMessage,
+    
     '/getFace' : mediaHandler.getFace,
     '/getFont' : mediaHandler.getFont,
-  },
-  HEAD: {
-
   },
   POST: {
     '/newGame': jsonHandler.newGame,
@@ -61,6 +59,11 @@ const urlStruct = {
 const onRequest = (request, response) => {
   const parsedUrl = url.parse(request.url);
   const params = query.parse(parsedUrl.query);
+
+  //TODO
+  //Make head requests getable.
+  //implement ifs in all of the enedpoints
+  req = request.method === 'HEAD'? 'GET' : request.method;
 
   if (urlStruct[request.method][parsedUrl.pathname]) {
     urlStruct[request.method][parsedUrl.pathname](request, response, params);
