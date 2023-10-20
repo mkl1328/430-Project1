@@ -358,6 +358,7 @@ const init = async () => {
     document.querySelector("#word-input").value = ''
     document.querySelector("#turns").innerHTML = localData.turn + 1
     newGameButton.disabled = false;
+    lookForGames();
   });
 
   const sendMessageButton = document.querySelector("#send-button");
