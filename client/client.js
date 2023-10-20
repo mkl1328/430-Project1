@@ -75,6 +75,11 @@ const handleGameUpdates = async (update) => {
       document.querySelector("#other-ready-text").innerHTML = winningWord;
       document.querySelector("#my-ready-text").innerHTML = winningWord;
 
+      const replay = document.querySelector("#replay")
+      while(replay.firstChild) {
+        replay.removeChild(replay.firstChild);
+      }
+
       const wordGrid = document.querySelector("#message-grid");
 
       wordGrid.removeChild(document.querySelector("#message-state-indicator"));
@@ -95,7 +100,8 @@ const handleGameUpdates = async (update) => {
         //Add message box to win tab
       let finalMessages = document.createElement('wordsList')
       finalMessages.innerHTML = wordGrid.innerHTML;
-      document.querySelector("#replay").appendChild(finalMessages);
+      
+      replay.appendChild(finalMessages);
       console.log(finalMessages)
 
       //undisable inputs
@@ -114,6 +120,10 @@ const handleGameUpdates = async (update) => {
       document.querySelector('#home-page').classList.add('active');
       document.querySelector('#game-page').classList.remove('active');
       document.querySelector('#make-new-game').disabled = false;
+
+      document.querySelector("#word-input").value = ''
+      document.querySelector("#send-button").disabled = false;
+      document.querySelector("#word-input").disabled = false;
 
       resetBubbles();
 
@@ -154,7 +164,7 @@ const gameLoop = async () => {
     handleGameUpdates(obj);
 
     console.log('message recieved')
-    if(obj.updateType !== 'quit') return gameLoop();
+    if(obj.updateType !== 'quit' && obj.updateType !== 'winGame') return gameLoop();
   }
 }
 
@@ -340,8 +350,11 @@ const init = async () => {
       });
     } 
     resetLocalData();
+    resetBubbles();
     document.querySelector('#home-page').classList.add('active');
     document.querySelector('#game-page').classList.remove('active');  
+    document.querySelector("#word-input").value = ''
+    document.querySelector("#turns").innerHTML = localData.turn + 1
     newGameButton.disabled = false;
   });
 

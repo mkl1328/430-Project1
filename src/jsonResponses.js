@@ -137,6 +137,10 @@ const quitGame = (request, response, params) => {
     return respondJSON(request, response, 404, responseJSON);
   } if (games[params.code].waiting) {
     // is game still waiting? if so, jsut close
+    const req = games[params.code].players.p1.request;
+    const res = games[params.code].players.p1.response;
+    responseJSON.message = 'closed request, since game closed';
+    respondJSON(req, res, 201, responseJSON);
     delete games[params.code];
     responseJSON.message = 'Game closed successfully';
     updateGameList();
