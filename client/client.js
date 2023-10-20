@@ -24,8 +24,9 @@ const fillTopBar = (whichPlayer, face, name) => {
 const handleGameUpdates = (update) => {
   switch (update.updateType) {
     case 'recievedWord' : 
-    //TODO
     // switch other person's bubble to ready
+    document.querySelector("#other-ready").classList.add('ready-message');
+    document.querySelector("#other-ready-text").innerHTML = '✔';
       break;
     case 'roundOver' : 
       //construct div with words
@@ -47,13 +48,18 @@ const handleGameUpdates = (update) => {
       document.querySelector("#send-button").disabled = false;
       document.querySelector("#word-input").disabled = false;
       document.querySelector("#word-input").value = '';
-      //TODO
+      
       //increment turn counter (data and on screen)
       localData.turn = update.turn;
+      document.querySelector("#turns").innerHTML = localData.turn + 1;
 
       localData.words.push(update.words.p1, update.words.p2)
-      //TODO
+
       //visual bubbles back to not ready
+      document.querySelector("#other-ready").classList.remove('ready-message');
+      document.querySelector("#my-ready").classList.remove('ready-message');
+      document.querySelector("#other-ready-text").innerHTML = '. . .';
+      document.querySelector("#my-ready-text").innerHTML = '. . .';
       break;
     case 'winGame' :
       //TODO
@@ -69,8 +75,12 @@ const handleGameUpdates = (update) => {
       // send back to home
       document.querySelector('#home-page').classList.add('active');
       document.querySelector('#game-page').classList.remove('active');
+      document.querySelector('#make-new-game').disabled = false;
 
       resetLocalData();
+      //No immediate reupdate // having issues
+      lookForGames();
+
       break;
     default:
       console.log('something went wrong- updateType was not one of the four regular types. Check spelling: ' + update.updateType);
@@ -135,6 +145,9 @@ const getOtherPlayer = async () => {
     document.querySelector("#send-button").disabled = false;
     document.querySelector("#word-input").disabled = false;
 
+    document.querySelector("#waiting-screen").classList.remove('active')
+    document.querySelector("#game").classList.add('active')
+
     gameLoop();
     return
   }
@@ -185,6 +198,9 @@ const updateGameList = async (response) => {
 
         document.querySelector('#home-page').classList.remove('active');
         document.querySelector('#game-page').classList.add('active');
+
+        document.querySelector("#game").classList.add('active')
+        document.querySelector("#waiting-screen").classList.remove('active')
 
         fillTopBar('this', localData.face, localData.name);
         fillTopBar('other', obj.player.face, obj.player.name);
@@ -251,9 +267,6 @@ const init = async () => {
 
   //TODO
   //Home page stuff here (profile) + stats
-  //Name - on input, save to localstorage
-  //Dont forget to remove leading + trailing spaces;
-  // on lose focus, check that it's not empty. if it is, enter Guest
 
   document.querySelector("#home-button").addEventListener('click', async () => {
     if(localData.gameCode && localData.state !== 'home'){
@@ -302,6 +315,9 @@ const init = async () => {
 
       //TODO
       //Add waiting overlay
+      document.querySelector("#waiting-screen").classList.add('active')
+      document.querySelector("#game").classList.remove('active')
+
       sendMessageButton.disabled = true;
       messageBox.disabled = true;
 
@@ -317,6 +333,13 @@ const init = async () => {
   const sendMessage = async () => {
     // console.log('sending message')
     const word = messageBox.value.replace(/\s+|[^a-zA-Z]/g, '').toUpperCase();
+    
+    // check that word isn't empty string;
+    if(!word) {
+      messageBox.value = ''
+      messageBox.placeholder = 'Type something!'
+      return
+    }
 
     //No repeat words!! 
     for(let storedWord of localData.words) {
@@ -327,6 +350,8 @@ const init = async () => {
       }
     }
 
+    document.querySelector("#my-ready").classList.add('ready-message');
+    document.querySelector("#my-ready-text").innerHTML = '✔';
     messageBox.placeholder = 'Type a word!'
     sendMessageButton.disabled = true;
     messageBox.disabled = true;
@@ -364,6 +389,21 @@ const init = async () => {
       e.target.value = filteredText;
     }
   });
+  
+  nameBox.addEventListener('blur', (e) => {
+    let newName = e.target.value.trim();
+    if(!newName) {
+      e.target.value = 'Guest'
+      localStorage.setItem("STST_name", 'Guest')
+    }
+  });
+  nameBox.addEventListener('input', (e) => {
+    //Check it's not an empty string
+    let newName = e.target.value.trim();
+    if(newName) {
+      localStorage.setItem("STST_name", newName);
+    }
+  })
 
   window.addEventListener("beforeunload", () => {
     if(localData.gameCode && localData.state !== 'home'){

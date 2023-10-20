@@ -20,7 +20,7 @@
             <img src="/getFace?face=1" alt="Profile Pic!">
           </div>
           <div id="you-right-panel">
-            <input type="text" value="Guest" id="name-box" maxlength="10">
+            <input type="text" value="Guest" id="name-box" autocomplete="off" maxlength="10">
             <div id="colorSelect"></div>
           </div>
         </div>
@@ -38,6 +38,7 @@
         </div>
       </div>
     </div>
+
     <div id="game-page">
       <div id="game-sidebar"> 
         <button id="home-button"><span class="zero">🏠</span></button>
@@ -48,16 +49,22 @@
             <p> - Type any word! <br></p>
             <p> - After the first round, type a word that connects the two previous words! <br></p>
             <p> - Words can only be A-Z (no spaces!) <br></p>
-            <p> - Words can be up to 25 letters long <br></p>
+            <p> - Words can be up to 12 letters long <br></p>
             <p> - Words can't repeat! <br></p>
             <p> - If you say the same thing, you win! <br></p>
           </div>
         </div>
       </div>
+
+      <div id="waiting-screen">
+        <h1>Looking for another player . . .</h1>
+        <!-- Loading obj... -->
+      </div>
+
       <div id="game">
         <div id="top-game-bar">
           <div id="this-player" class="player-tag">
-            <img src="" alt="your face" id="this-face">
+            <img src="" alt="your face" id="this-face" class="topbar-face">
             <h1 id="this-name"></h1>
           </div>
           <div id="turn-count">
@@ -65,25 +72,36 @@
             <h1 id="turns">1</h1>
           </div>
           <div id="other-player" class="player-tag">
-            <img src="" alt="other player's face" id="other-face">
+            <img src="" alt="other player's face" id="other-face" class="topbar-face">
             <h1 id="other-name"></h1>
           </div>
         </div>
         <div id="enter-word-section">
           <div id="input-controls">
-            <input type="text" placeholder="Type a word!" id="word-input" autocomplete="off" maxlength="25">
+            <input type="text" placeholder="Type a word!" id="word-input" autocomplete="off" maxlength="12">
             <button id="send-button"><h1>Send!</h1></button>
           </div>
         </div>
         <div id="messages-window">
-          <div id="message-grid"></div>
+          <div id="message-grid">
+            <word-turn id="message-state-indicator">
+              <div id="my-ready"> 
+                <p id="my-ready-text">. . .</p>
+                <!-- 𖧹▲◆⬟⬣⯄ -->
+              </div>
+              <div id="other-ready"> 
+                <p id="other-ready-text">. . .</p>
+              </div>
+            </word-turn>
+          </div>
         </div>
-        <div id="win-overlay">
-          <h1>YOU WON!</h1>
-          <h2>It took you and ___ xx turns!</h2>
-          <!-- PLAY AGAIN button -->
-          <!-- GO HOME button -->
-        </div>
+      </div>
+
+      <div id="win-overlay">
+        <h1>YOU WON!</h1>
+        <h2>It took you and ___ xx turns!</h2>
+        <!-- PLAY AGAIN button -->
+        <!-- GO HOME button -->
       </div>
     </div>
   </div>

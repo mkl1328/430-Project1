@@ -138,7 +138,7 @@ const makeGameList = () => {
   };
   return obj;
 }
-
+ 
 //Call when a game opens, a game fills, and when a potential game closes.
 const updateGameList = () => {
   const responseJSON = makeGameList()
@@ -212,7 +212,7 @@ const sendMessage = (request, response, params) => {
     if(!game.readyToCompare) {
       game.readyToCompare = true;
       // resolve getMessage for other player by sending an update.
-      recieveMessage(game.players[params.player === "p1"? "p1" : "p2"].response);
+      recieveMessage(game.players[params.player === "p2"? "p1" : "p2"].response);
     } else {
       //Reset for next round.
       game.readyToCompare = false;

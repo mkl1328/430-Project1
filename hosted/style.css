@@ -263,33 +263,30 @@ header > h1 {
   grid-area: closeEnough;
 }
 
+#waiting-screen.active {display: flex}
+#waiting-screen {
+  /* change this dynamically */
+  display: none;
+  grid-area: game;
+  align-items: center;
+}
+#waiting-screen > h1 {
+  margin: auto 15rem;
+  font-size: 3rem;
+}
+
+#game.active {display :grid}
 #game {
-  display: grid;
+  display: none;
   grid-area: game;
   height: 100%;
-  grid-template-rows: 1fr 3fr 2fr 10fr;
+  grid-template-rows: 1fr 3fr 10fr;
   grid-template-areas: "topbar"
-                       "input"
-                       "waitingInfo" 
+                       "input" 
                        "playArea";
   padding: 1rem 5rem;
   padding-right: 10rem;
   padding-top: 2rem;
-}
-
-#messages-window {
-  position: relative;
-  /* ^ So that I can add a gradient to the top for fading the messages */
-  grid-area: playArea;
-  overflow: auto;
-  padding: 10px;
-}
-
-#message-grid {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  row-gap: 10px;
 }
 
 #enter-word-section {
@@ -306,11 +303,54 @@ header > h1 {
 }
 
 #word-input {
+  outline: none;
+  border: 0px;
   font-size: 2em;
+  border-radius: 30px 0px 0px 30px;
+  padding-left: 20px;
+  text-align: center;
+  background-color: #b1a579;
+}
+#word-input::placeholder {
+  text-align: center;
+  margin-top: 10em;
+  margin-bottom: 0.5em;
+
+  color: #978955;
+}
+#word-input:disabled {
+  background-color: #efe6c9;
+  color:#dab42a;
+  border:#25231c dashed 3px;
+  border-right: 0px;
+}
+#word-input:focus::placeholder {
+  color: rgb(92, 84, 59);
+}
+#word-input:focus {
+  background-color: #7d7249;
+  color:#faf7eb;
 }
 
 #send-button {
   font-size: 0.8em;
+  border-radius: 0px 30px 30px 0px;
+  background-color: #da7939;
+  color: #faf7eb;
+  border:0px;
+  padding: 0 15px;
+}
+#send-button:hover {
+  background-color: #c95a2b;
+  color: #f1e5d2;
+}
+#send-button:active {
+  background-color: #9f4621;
+  color: #c9bead;
+}
+#send-button:disabled {
+  background-color: #515151;
+  color: #dcdcdc;
 }
 
 #top-game-bar {
@@ -318,6 +358,7 @@ header > h1 {
   grid-area: topbar;
   grid-template-columns: 45% 10% 45%;
   grid-template-areas: "thisplayer turnCount otherplayer";
+  align-items: center;
 }
 
 .player-tag {
@@ -332,17 +373,31 @@ header > h1 {
   border:#36382E solid 5px;
   overflow: hidden;
 }
+.player-tag > h1 {
+  overflow: hidden;
+  text-overflow:ellipsis;
+}
+
+.topbar-face {
+  min-width: 80px;
+}
 
 #this-player {
   margin-left: 5rem;
+  margin-right: 0.5rem;
   grid-area: thisplayer;
   flex-direction: row;
 }
 
 #other-player {
   margin-right: 5rem;
+  margin-left: 0.5rem;
   grid-area: otherplayer;
   flex-direction: row-reverse;
+}
+#other-player > h1 {
+  /* Doesnt seem to work.. Maybe something to do w/ elipses */ 
+  text-align:end;
 }
 
 #turn-count { 
@@ -368,26 +423,88 @@ header > h1 {
   display: none;
 }
 
+#messages-window {
+  background-color:#c2b890;
+  border-radius: 20px;
+  grid-area: playArea;
+  overflow: auto;
+  padding: 10px;
+  margin: 0 8rem;
+}
+
+#message-grid {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  row-gap: 10px;
+}
+
+#message-state-indicator {
+  order: -1000
+}
+#message-state-indicator > div{
+  background-color: #ada072;
+}
+#message-state-indicator div.ready-message{
+  background-color: #dab42a;
+}
+#message-state-indicator p {
+  font-family: 'ZeroCool';
+  text-align: center;
+}
+
 word-turn {
   display: grid;
   grid-template-columns: 1fr 1fr;
+}
+
+word-turn > div {
+  background-color: #978955;
+  border-radius:2rem;
+  padding:1rem 2rem;
+  margin: 0.7rem 1.5rem;
+}
+word-turn p {
+  color: #faf7eb;
+  margin: 0;
+  font-size: 1.5rem;
+  text-align: center;
 }
 
 /* Might have to rework this so the button can sit to the right side */
 game-banner {
   display: flex;
   flex-direction: row;
+  gap: 10px;
+  padding: 20px;
+  background-color: #c2b890;
+  margin-bottom:5px
 }
 
 game-banner > img {
-  height:80px;
-  width:80px;
+  height:60px;
+  width:60px;
   border-radius: 50%;
+  border:#36382E solid 5px;
   overflow: hidden;
+  margin: auto 0
 }
-/* game-banner > button {
-  
-} */
+game-banner > h1 {
+  margin-top: 1.8rem
+}
+game-banner > button {
+  background-color: #36382E;
+  margin: auto 3rem;
+  margin-left: auto;
+  padding: 1em 1.5em;
+  border: 0px;
+  border-radius: 1.5em; 
+  height: 65%
+}
+game-banner > button > h1 {
+  margin: 0;
+  color:#faf7eb
+}
 
 
 ::-webkit-scrollbar {
