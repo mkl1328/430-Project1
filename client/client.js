@@ -327,6 +327,8 @@ const init = async () => {
   localStorage.setItem('STST_name', localData.name);
   localStorage.setItem('STST_face', localData.face);
 
+  document.querySelector('#profile-pic').src = `/getFace?face=${localData.face}`
+  
   lookForGames();
 
   //Populate current open games
